@@ -1,0 +1,38 @@
+S3 - Simple Storage Service
+
+What is S3?
+S3 is AWS's file storage service. You store files (called objects) inside containers (called buckets). Think of a bucket like a folder in the cloud, but accessible from anywhere.
+
+Bucket
+A bucket is the top-level container for your files. Bucket names must be globally unique across all of AWS. You pick a region where the bucket lives.
+
+Object
+An object is any file you upload — images, videos, logs, backups, etc. Each object has a key (its name/path) and the actual data.
+
+Storage Classes
+Different tiers based on how often you access the data:
+- Standard         - frequently accessed data, highest cost
+- Infrequent Access (IA) - data you rarely need but must retrieve fast
+- Glacier          - cheap archival storage, slow retrieval (minutes to hours)
+- Glacier Deep Archive - cheapest, slowest (up to 12 hours to restore)
+
+Permissions & Access
+By default buckets are private. You control access via:
+- Bucket policies   - JSON rules applied to the whole bucket
+- ACLs              - older way, per-object or per-bucket access control
+- Block Public Access - a master switch to prevent any public access
+
+Versioning
+Keep multiple versions of the same file. If you overwrite or delete a file by mistake, you can restore an older version.
+
+Static Website Hosting
+You can host a static website (HTML/CSS/JS) directly from an S3 bucket. No server needed.
+
+Lifecycle Rules
+Automatically move or delete objects after a set time. Example: move files to Glacier after 30 days, delete after 1 year.
+
+Pricing
+You pay for:
+- Storage used (per GB per month)
+- Requests (GET, PUT, DELETE, etc.)
+- Data transfer out of AWS

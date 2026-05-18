@@ -1,0 +1,31 @@
+AWS 
+Amazon Web Services. A cloud platform by Amazon where you can rent computers, storage, and other services over the internet instead of buying your own hardware.
+
+Instance 
+
+instances - EC2 servers. A virtual computer running in the cloud. You can start it, stop it, or delete it anytime. It's basically a rented machine.
+Instance type - CPU , memory , storage. Defines how powerful the instance is. For example, more CPUs means faster processing, more memory means it can handle more things at once.
+
+Images 
+
+AMI catalog
+AMI stands for Amazon Machine Image. It's a saved snapshot of a computer setup (operating system, software, settings). You pick one to launch a new instance — like choosing what comes pre-installed on your rented machine.
+
+keypairs
+A keypair is a set of two keys (public and private) used to securely log into your EC2 instance. AWS holds the public key, you keep the private key. Without it, you can't SSH into your machine.
+
+IAM
+Identity and Access Management. Controls who can do what in your AWS account. You can create users, give them specific permissions, and make sure nobody touches stuff they shouldn't.
+
+load balancer 
+Sits in front of your servers and spreads incoming traffic across multiple instances. So if one server gets too busy, others pick up the slack. Keeps things fast and available.
+
+security groups
+Acts like a firewall for your instance. You define rules for what traffic is allowed in and out — for example, only allow port 22 for SSH or port 80 for web traffic.
+
+volumes
+A virtual hard drive attached to your EC2 instance. This is where your data and files live. You can resize it or detach and move it to another instance.
+
+snapshots
+A point-in-time backup of a volume. If something breaks, you can restore from a snapshot. Think of it like a save point for your disk.
+
