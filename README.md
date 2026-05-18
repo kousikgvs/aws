@@ -1,34 +1,84 @@
+# AWS with Python (boto3)
+
+A hands-on project for interacting with AWS services — **EC2** and **S3** — using Python's `boto3` SDK and Jupyter Notebooks.
+
+---
+
+## Getting Started
+
+### 1. Set Up the Virtual Environment
+
+```bash
 python -m venv venv
-venv/Scripts/activate
+venv\Scripts\activate
 pip install -r requirements.txt
+```
 
+### 2. AWS Prerequisites
 
-1) install boto3
-2) install AWS CLI 
-3) create IAM user and give him access administrator access , or else we give administrator access for EC2 , S3 ... etc
-4) then click on user and create secret access key for cli.
-5) you will get user access key and secret access key store it in the ENV.
-6) folder cli - enter aws cli before that install awscli package python
-7) .pem file is used to create user and user access key and secret access key is used to create instances , s3 buckets ... etc.
-8) aws cli will ask for user access key and secret access key and default region , give it to the cli it will configure aws into that folder
+Before running any notebooks, make sure you've completed the following steps:
 
-for EC2 checkout the folder C:\projects\aws\AWS_EC2
-create an EC2 instance
-launch an EC2 instance 
-create security groups
-attach security groups to Ec2 instance 
-dettach security groups to Ec2 instance 
-check EC2 instance status
-Start , stop and terminate Ec2 in python
+1. **Install boto3 and AWS CLI** — both are listed in `requirements.txt` and will be installed automatically.
+2. **Create an IAM User** — go to the AWS Console and create a user with **Administrator Access**, or at minimum grant permissions for EC2 and S3.
+3. **Generate Access Keys** — in the IAM user settings, create an **Access Key** for CLI usage. You'll get an *Access Key ID* and a *Secret Access Key* — keep these safe.
+4. **Store credentials as environment variables** — never hardcode them in your code.
+5. **Configure the AWS CLI** — run `aws configure` and provide your Access Key ID, Secret Access Key, and default region. This writes the credentials to `~/.aws/credentials`.
 
-for S3 
-i have created a sample folder C:\projects\aws\Sample
-with 3 folders - folder1 , folder2 , folder3
-1) create a S3 bucket
-2) upload file to s3 bucket
-3) list s3 objects or files in the bucket
-4) download s3 files to local system
-5) upload all files in dir to S3
-6) download full s3dir to local
-7) delete all files in an S3 bucket
+> **Note:** The `.pem` file is used for SSH access to EC2 instances. Your Access Key and Secret Key are what authenticate API calls for creating instances, S3 buckets, etc.
+
+---
+
+## EC2 — Elastic Compute Cloud
+
+All EC2 code lives in [`AWS_EC2/code.ipynb`](AWS_EC2/code.ipynb).
+
+The notebook walks through the full EC2 instance lifecycle:
+
+- **Create a Key Pair** — generates an SSH key pair and saves the `.pem` file locally
+- **Create an EC2 Instance** — launches a new instance with a specified AMI, instance type, and tags
+- **Wait Until Running** — polls AWS until the instance reaches the `running` state and prints its public IP
+- **Create a Security Group** — sets up a virtual firewall with custom inbound rules (e.g., SSH on port 22)
+- **Attach a Security Group** — adds an existing security group to a running instance
+- **Detach a Security Group** — removes a security group while keeping at least one attached
+- **Check Instance Status** — fetches the current state and health checks for an instance
+- **Start / Stop / Terminate** — full lifecycle control: resume billing, pause it, or permanently delete it
+
+---
+
+## S3 — Simple Storage Service
+
+All S3 code lives in [`AWS_S3/code.ipynb`](AWS_S3/code.ipynb).
+
+A local folder [`Sample/`](Sample/) is used as the test directory for all upload and download operations. It contains three sub-folders (`folder1`, `folder2`, `folder3`) with sample files.
+
+The notebook covers:
+
+1. **Create a Bucket** — creates a new globally unique S3 bucket in a specified region
+2. **Upload a File** — uploads a single local file to the bucket with a custom S3 key
+3. **List Objects** — lists all objects in the bucket along with their size and last modified date
+4. **Download a File** — downloads a single S3 object back to your local machine
+5. **Upload a Full Directory** — recursively uploads every file in `Sample/`, preserving the folder structure as S3 keys
+6. **Download a Full Directory** — downloads all objects from the bucket and recreates the folder structure locally
+7. **Delete All Files** — cleans up the bucket by removing all stored objects
+
+---
+
+## Project Structure
+
+```
+aws/
+├── AWS_EC2/
+│   └── code.ipynb        # EC2 operations notebook
+├── AWS_S3/
+│   └── code.ipynb        # S3 operations notebook
+├── Sample/               # Test files used for S3 uploads/downloads
+│   ├── file4
+│   ├── folder1/file1
+│   ├── folder2/file2
+│   └── folder3/file3
+├── notes/                # Setup notes and reference material
+├── stop_all_services.py  # Utility to stop running AWS services
+├── requirements.txt      # Python dependencies
+└── README.md
+```
 
