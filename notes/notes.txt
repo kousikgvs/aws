@@ -1,31 +1,52 @@
-AWS 
-Amazon Web Services. A cloud platform by Amazon where you can rent computers, storage, and other services over the internet instead of buying your own hardware.
+AWS — Amazon Web Services
+=========================
 
-Instance 
+AWS is Amazon's cloud platform. Instead of buying and maintaining your own servers, you rent exactly what you need — computing power, storage, databases, networking — and pay only for what you use. Everything runs in Amazon's data centers around the world, so your apps can be fast and available globally.
 
-instances - EC2 servers. A virtual computer running in the cloud. You can start it, stop it, or delete it anytime. It's basically a rented machine.
-Instance type - CPU , memory , storage. Defines how powerful the instance is. For example, more CPUs means faster processing, more memory means it can handle more things at once.
 
-Images 
+Core Concepts
+-------------
 
-AMI catalog
-AMI stands for Amazon Machine Image. It's a saved snapshot of a computer setup (operating system, software, settings). You pick one to launch a new instance — like choosing what comes pre-installed on your rented machine.
+Instance
+  An EC2 instance is essentially a virtual computer running in the cloud. You can start it, stop it, resize it, or terminate it at any time. There's no physical hardware to worry about — AWS handles all of that.
 
-keypairs
-A keypair is a set of two keys (public and private) used to securely log into your EC2 instance. AWS holds the public key, you keep the private key. Without it, you can't SSH into your machine.
+Instance Type
+  This defines how powerful your instance is — how many CPUs it has, how much memory, and what kind of storage. For example, a compute-optimized type is great for heavy processing, while a memory-optimized type handles large in-memory datasets. Choose based on what your workload actually needs.
 
-IAM
-Identity and Access Management. Controls who can do what in your AWS account. You can create users, give them specific permissions, and make sure nobody touches stuff they shouldn't.
 
-load balancer 
-Sits in front of your servers and spreads incoming traffic across multiple instances. So if one server gets too busy, others pick up the slack. Keeps things fast and available.
+Images
+------
 
-security groups
-Acts like a firewall for your instance. You define rules for what traffic is allowed in and out — for example, only allow port 22 for SSH or port 80 for web traffic.
+AMI — Amazon Machine Image
+  An AMI is a pre-packaged snapshot of an operating system, software, and configuration. When you launch a new instance, you pick an AMI — it's like choosing what comes pre-installed on your machine. AWS offers a catalog of official AMIs (Amazon Linux, Ubuntu, Windows, etc.), and you can also create your own.
 
-volumes
-A virtual hard drive attached to your EC2 instance. This is where your data and files live. You can resize it or detach and move it to another instance.
 
-snapshots
-A point-in-time backup of a volume. If something breaks, you can restore from a snapshot. Think of it like a save point for your disk.
+Access & Security
+-----------------
+
+Key Pairs
+  A key pair is how you securely SSH into your EC2 instance. AWS stores the public key on the instance; you download and keep the private key (.pem file). Without the private key, there's no way to log in — so keep it safe and never share it.
+
+IAM — Identity and Access Management
+  IAM is how you control who can do what inside your AWS account. You create users and roles, assign them specific permissions (read-only, full access, etc.), and make sure people and services only have access to what they actually need. It's your first line of defense for account security.
+
+Security Groups
+  Think of a security group as a virtual firewall around your instance. You write rules that define which traffic is allowed in (inbound) and out (outbound). For example: allow SSH on port 22, allow HTTP on port 80, block everything else. Rules can be scoped to specific IP ranges for tighter control.
+
+
+Networking
+----------
+
+Load Balancer
+  A load balancer sits in front of your fleet of instances and distributes incoming requests across them. If one instance is under heavy load, traffic gets routed to others. This keeps your application responsive and prevents any single instance from becoming a bottleneck. It also improves availability — if one instance goes down, traffic automatically shifts to healthy ones.
+
+
+Storage
+-------
+
+Volumes (EBS — Elastic Block Store)
+  A volume is a virtual hard drive attached to your EC2 instance. It's where your operating system, application code, and data live. You can resize a volume without stopping the instance, and you can detach it from one instance and attach it to another — like unplugging a hard drive and plugging it into a different computer.
+
+Snapshots
+  A snapshot is a point-in-time backup of a volume, stored in S3. If something goes wrong — a bad deployment, accidental deletion, disk corruption — you can restore the volume from a snapshot. It's a good habit to take snapshots before making major changes to a running system.
 

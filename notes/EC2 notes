@@ -1,0 +1,148 @@
+EC2 — Elastic Compute Cloud
+============================
+
+What is EC2?
+------------
+EC2 is AWS's core compute service. It lets you rent virtual machines — called instances — in the cloud and run whatever you want on them: web servers, databases, data pipelines, machine learning workloads, etc. You choose the OS, the hardware specs, and the region. You pay by the second (or hour) and can shut it down whenever you're done.
+
+
+Instance Lifecycle
+------------------
+An EC2 instance goes through several states during its life:
+
+  Pending       The instance is starting up. AWS is allocating hardware and booting the OS.
+  Running       The instance is live and ready to use. Billing is active.
+  Stopping      A graceful shutdown is in progress.
+  Stopped       The instance is off. No compute billing, but EBS storage costs continue.
+                You can start it again at any time — it gets a new public IP each time.
+  Terminated    The instance is permanently deleted. This cannot be undone.
+                All ephemeral (instance store) data is gone. EBS volumes may persist
+                depending on your settings.
+
+
+Instance Types
+--------------
+AWS offers dozens of instance types grouped into families based on their strengths:
+
+  t3 / t4g     General purpose, burstable performance. Great for low-traffic apps,
+               dev/test environments, and small workloads. t3.micro is free-tier eligible.
+
+  m6i / m7i    Balanced compute, memory, and networking. Good all-rounders for
+               production web servers and application servers.
+
+  c6i / c7i    Compute-optimized. High CPU-to-memory ratio. Best for CPU-intensive
+               tasks like video encoding, batch processing, or game servers.
+
+  r6i / r7i    Memory-optimized. Large RAM for in-memory databases (Redis, Memcached),
+               real-time analytics, and SAP workloads.
+
+  p4 / g5      GPU instances. Designed for machine learning training, inference,
+               and graphics rendering.
+
+The naming convention is: [family][generation][extras].[size]
+Example: t3.micro = t-family, 3rd gen, micro size (1 vCPU, 1 GB RAM)
+
+
+Amazon Machine Images (AMIs)
+-----------------------------
+An AMI is a template for launching an instance. It defines:
+  - The operating system (Amazon Linux, Ubuntu, Windows Server, etc.)
+  - Pre-installed software and configurations
+  - Root volume snapshot
+
+You can use:
+  - AWS-managed AMIs   : official, regularly patched, ready to go
+  - Marketplace AMIs   : third-party software pre-configured (e.g., WordPress, Nginx)
+  - Custom AMIs        : images you build yourself with your exact setup baked in —
+                         great for consistent, fast deployments across your fleet
+
+
+Key Pairs
+---------
+A key pair is your SSH credential for logging into a Linux EC2 instance. AWS generates
+a public/private key pair:
+
+  - Public key   : stored by AWS, automatically placed in the instance at launch
+  - Private key  : downloaded as a .pem file — you keep this, AWS never stores it
+
+To SSH into an instance:
+  ssh -i "your-key.pem" ec2-user@<public-ip>
+
+Keep your .pem file secure. If you lose it, you cannot recover it — you'd need to
+create a new key pair and replace the instance.
+
+
+Security Groups
+---------------
+A security group is a stateful virtual firewall attached to your instance. You define:
+
+  Inbound rules    What traffic is allowed TO reach your instance.
+                   Example: allow TCP port 22 (SSH) from your IP only.
+                            allow TCP port 80 (HTTP) from anywhere (0.0.0.0/0).
+
+  Outbound rules   What traffic your instance is allowed to SEND out.
+                   By default, all outbound traffic is allowed.
+
+One instance can have multiple security groups attached. Rules are additive — if any
+rule allows traffic, it's allowed. There's no "deny" rule; you simply don't add an
+allow rule for what you want to block.
+
+Best practice: restrict inbound SSH (port 22) to your own IP address only. Never open
+it to 0.0.0.0/0 in production.
+
+
+Storage — EBS Volumes
+----------------------
+Every EC2 instance has at least one EBS (Elastic Block Store) volume — the root volume
+where the OS lives. You can attach additional volumes for data.
+
+  gp3 / gp2    General purpose SSD. Good baseline performance, suitable for most workloads.
+  io2 / io1    Provisioned IOPS SSD. High performance for databases that need low latency.
+  st1          Throughput-optimized HDD. Good for big sequential reads (logs, data lakes).
+  sc1          Cold HDD. Cheapest option, for infrequently accessed large datasets.
+
+Volumes persist independently from instances by default. When you terminate an instance,
+the root volume is deleted (unless you change the setting), but extra data volumes survive.
+
+
+Snapshots & Backups
+--------------------
+A snapshot is a point-in-time backup of an EBS volume, stored durably in S3.
+  - Snapshots are incremental: only changed blocks are saved after the first snapshot
+  - You can create a new volume from a snapshot (useful for cloning or disaster recovery)
+  - You can copy snapshots across regions for geographic redundancy
+
+Automate snapshots using AWS Data Lifecycle Manager — set a schedule (daily, weekly)
+and a retention count, and AWS handles the rest.
+
+
+Networking
+----------
+VPC (Virtual Private Cloud)
+  Every instance lives inside a VPC — an isolated network you control. You define the
+  IP address range, subnets, and routing rules.
+
+Public vs Private Subnets
+  - Public subnet  : has a route to the internet via an Internet Gateway. Instances
+                     here can have a public IP and be reached from the web.
+  - Private subnet : no direct internet access. Used for databases and internal services.
+                     Route outbound traffic through a NAT Gateway if needed.
+
+Elastic IP
+  By default, a stopped-then-started instance gets a new public IP. An Elastic IP is
+  a static public IP address you can attach to any instance and keep even when it stops.
+
+
+Pricing Model
+-------------
+  On-Demand      Pay by the second with no commitment. Most flexible, highest per-hour cost.
+                 Use for unpredictable workloads or short-term experiments.
+
+  Reserved       Commit to 1 or 3 years and save up to 72% vs On-Demand.
+                 Use for stable, always-on workloads.
+
+  Spot           Bid for unused AWS capacity at up to 90% discount. AWS can reclaim
+                 the instance with 2 minutes notice. Use for fault-tolerant batch jobs.
+
+  Savings Plans  Flexible discount (up to 66%) in exchange for committing to a minimum
+                 spend per hour over 1 or 3 years. More flexible than Reserved Instances.
